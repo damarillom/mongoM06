@@ -1,0 +1,151 @@
+1. 	db.restaurants.find({"name": /Cream/}).count()
+		103
+
+2.	db.restaurants.find({"name" : { $regex: /Cream/i}}).count()
+	db.restaurants.find({"name" : /Cream/i}).count()
+		104
+
+3.	db.restaurants.find({ $and:[{name: /cream/i},{name: {$not:/Cream/}}]}, { "restaurant_id" : 1, "name":1,"borough":1, "cuisine" :1 } ).pretty()
+		{
+			"_id" : ObjectId("5c40d96a69c4df57b115aa73"),
+			"borough" : "Manhattan",
+			"cuisine" : "Ice Cream, Gelato, Yogurt, Ices",
+			"name" : "Talenti/Wichcraft Icecream",
+			"restaurant_id" : "41545304"
+		}
+
+
+
+4.	db.restaurants.find({name:{$regex:/^Dj/}},{_id:0,name:1,borough:1,cuisine:1}).count()
+	db.restaurants.find({"name":/^Dj/},{_id:0,name:1,borough:1,cuisine:1})
+		5
+
+5.	db.restaurants.find({"name":/^A.*\//, "cuisine": "Pizza/Italian", borough: "Staten Island"},{_id:0,name:1,borough:1,cuisine:1}).pretty()
+	db.restaurants.find( { borough: "Staten Island",cuisine: "Pizza/Italian", name:{$gte:"A",$lt:"B",$regex:/\//}}, { "restaurant_id" : 1, "name":1,"borough":1, "cuisine" :1,_id:0 } )
+		{ "borough" : "Staten Island", "cuisine" : "Pizza/Italian", "name" : "Angelo'S Pizzeria/Mimmo'S Restaurant", "restaurant_id" : "40397029" }
+
+6.	db.restaurants.find({"name":{$regex:/.*\'.*\'/, $regex:/.*\//}, "borough":"Staten Island", "cuisine":"Pizza/Italian"},{"name":1, "_id":0 ,"borough":1, "cuisine":1})
+		{ "borough" : "Staten Island", "cuisine" : "Pizza/Italian", "name" : "Angelo'S Pizzeria/Mimmo'S Restaurant" }
+		{ "borough" : "Staten Island", "cuisine" : "Pizza/Italian", "name" : "Nonna'S Old Fashioned Pizzeria / Nonna'S Bagels" }
+		(2)
+
+	db.restaurants.find({name:{$regex:"'.*/.*'"}, "borough":"Staten Island", "cuisine":"Pizza/Italian"}, { "restaurant_id" : 1, "name":1,"borough":1, "cuisine" :1,_id:0 } )
+		2
+		{ "borough" : "Staten Island", "cuisine" : "Pizza/Italian", "name" : "Angelo'S Pizzeria/Mimmo'S Restaurant", "restaurant_id" : "40397029" }
+		{ "borough" : "Staten Island", "cuisine" : "Pizza/Italian", "name" : "Nonna'S Old Fashioned Pizzeria / Nonna'S Bagels", "restaurant_id" : "41326216" }
+
+
+
+7.	db.restaurants.distinct("cuisine").sort()
+
+
+8.	db.restaurants.distinct("cuisine", {"cuisine":{$gte:"I", $lt:"M"}}).sort()
+		"Ice Cream, Gelato, Yogurt, Ices",
+		"Indian",
+		"Indonesian",
+		"Iranian",
+		"Irish",
+		"Italian",
+		"Japanese",
+		"Jewish/Kosher",
+		"Juice, Smoothies, Fruit Salads",
+		"Korean",
+		"Latin (Cuban, Dominican, Puerto Rican, South & Central American)"
+
+
+9.	db.restaurants.distinct("borough").sort()
+		[
+		    "Bronx",
+		    "Brooklyn",
+		    "Manhattan",
+		    "Missing",
+		    "Queens",
+		    "Staten Island"
+
+
+
+10.	db.restaurants.distinct("borough",{"cuisine":/Cajun/}).sort()
+		[ "Brooklyn", "Queens", "Staten Island" ]
+
+
+11.	db.restaurants.distinct('name',{'cuisine' :{ $regex : "Bagels/Pretzels" },'borough' :'Brooklyn' });
+	db.restaurants.distinct('name',{'cuisine' :"Bagels/Pretzels" ,'borough' :'Brooklyn' }); --> bueno
+		[
+			"Highway Bagels",
+			"Bagel Bazaar",
+			"Hillel Bagels",
+			"Terranova'S Bake Ridge Bagel",
+			"Bony'S Bagels",
+			"Mill Basin Bagel Cafe",
+			"Court Street Bagels",
+			"Bagels Cafe/Gowanus Yacht Club",
+			"A&R Hot Bagels",
+			"5Th Avenue Bageltique Cafe",
+			"Wild Bagels",
+			"H&L Bagel",
+			"Bagel Factory",
+			"Bunch Of Bagels",
+			"Bagels 'N More",
+			"Pretzel Maker @ Kings Plaza",
+			"Bagel World",
+			"Bagel Villa",
+			"La Bagel Delight",
+			"Bagelteria",
+			"Baguetteaboudit",
+			"The Bagel Market",
+			"Supreme Bagels",
+			"Bagelsmith",
+			"Sunny'S Bagels",
+			"Zee Bagels",
+			"Beygl",
+			"Fulton Street Bagels",
+			"Bergen Bagels",
+			"Bagels R Us",
+			"Brothers Bagels",
+			"Pelzer'S Of Philadelphia Pretzels",
+			"Boswyck Bagels",
+			"Bread Brothers Bagel Cafe",
+			"Na Bagels",
+			"The Bagel Factory",
+			"Bagel Cafe",
+			"Myrtle Bagel",
+			"Pio Bagel",
+			"Bread Brothers Iii",
+			"Bagel Road",
+			"Bagel Bob",
+			"Bagels & Bialys",
+			"Westway Bagel",
+			"Auntie Anne'S Kiosk",
+			"Gourmet Bagel Shoppe"
+		]
+
+
+
+12. db.restaurants.find({name:/'S$/, cuisine:"Italian"}).count()
+		44
+
+13. db.restaurants.find({name:/Wendy/},{"name":1}).count()
+		45
+
+14.	db.restaurants.distinct("name",{"name":/usion/}).sort() --> version con distinct
+		(45)
+	db.restaurants.find({"name": /usion/},{"name":1,"_id":0}).sort({"name":1}).pretty() --> version sin distinc
+		{ "name" : "Aba Asian Fusion Cuisine Ave" }
+		{ "name" : "Ageha Japanese Fusion" }
+		{ "name" : "Ahana Japanese Fusion Cuisine Inc" }
+		{ "name" : "Ako Asian Fusion" }
+		(46)
+
+
+15.	db.restaurants.find({name: /fusion/i},{_id:0,borough:1,name:1}).sort({borough:1,name:1})
+		(45)
+
+
+
+
+17) trobar el nom dels restaurants al zipcode 10036 amb nom que comença per "Ba", acaba en "a" sense importar majúscules o minúscules i conté algun espai
+
+
+
+
+18) trobar el nom dels restaurants al zipcode 10036 que comencin per una lletra que no estigui entre la "i" i la "n" (incloses) i no continguin ni "thai" ni "indonesian" tot sense importar majúscules o minúscules

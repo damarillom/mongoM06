@@ -1,0 +1,49 @@
+1. 	db.restaurants.find (
+		{
+	        'grades.2': {$exists: true},
+	        'grades.grade': {
+	            $nin: ["A", "B"]
+	        }
+	    },
+	    {
+	        _id: 0,
+	        restaurant_id: 1
+	    }
+	)
+
+		{ "restaurant_id" : "41602559" }
+
+
+2.	db.restaurants.find({'grades.1': {$exists: true}, 'grades.grade': { $nin: ["A", "B", "C"]}},{_id: 0, restaurant_id: 1}).pretty()
+		{ "restaurant_id" : "50008765" }
+		{ "restaurant_id" : "50014220" }
+		{ "restaurant_id" : "50014840" }
+		{ "restaurant_id" : "50015561" }
+		{ "restaurant_id" : "50015811" }
+		{ "restaurant_id" : "50016365" }
+		{ "restaurant_id" : "50017061" }
+
+
+3.	db.restaurants.find({'grades.2': {$exists: true}, 'grades.grade': {$all: ["A", "B", "C"]} }).count()
+		1465
+
+4.	db.restaurants.find({'grades.2': {$exists: true}, 'grades.grade': {$in: ["A", "B", "C"]} }).count()
+		18449
+
+
+5.	db.restaurants.find({'grades.2': {$exists: true}, 'grades.grade': {$in: ["A", "B", "C"]}, 'grades.grade': {$nin: ["Z", "P"]} }).count() --> No sirve
+
+	db.restaurants.find({"grades.2":{$exists: true}, "grades.grade": {$in:["A", "B", "C"], $nin:["Z", "P"]} }).count() --> buena
+
+	db.restaurants.find({'grades.2': {$exists: true}, $and:[{'grades.grade': {$in: ["A", "B", "C"]}}, {'grades.grade': {$nin: ["Z", "P"]}}] }).count() --> Mejor
+		16395
+
+6.	db.restaurants.find({'grades.2': {$exists: true}, $or:[{'grades.grade': {$nin: ["A", "B", "C"]}}, {'grades.grade': {$in: ["Z", "P"]}}] }).count()
+		2054
+
+7.	db.restaurants.find({"grades.1" : {$exists : true}, "grades.0.score" : { $gte: 27 }, "grades.1.score": {$gte :29}} ).count()
+		31
+
+8.	db.restaurants.find( { "grades":{$exists:true},$where: "this.grades.length>=2 && (this.grades[0].score < this.grades[this.grades.length-1].score)" } ).count()
+		10070	
+

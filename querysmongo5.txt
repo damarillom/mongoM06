@@ -1,0 +1,55 @@
+1.	db.restaurants.find({"address.coord.0":-73.98241999999999, "address.coord.1":40.579505}, {"_id":0, "restaurant_id":1, "name":1})
+
+2.	db.restaurants.find({grades:{$size:9}}).count()
+	
+	db.restaurants.find({$and:[{'grades.8':{$exists:true}}, {'grades.9':{$exists:false}}]}).count()
+		8
+
+3.	db.restaurants.find({$where:'this.grades.length>7'}).count();
+
+	db.restaurants.find({$expr:{$gt:[{$size:"$grades"}, 7]}}).count();
+
+	db.restaurants.find({'grades.7':{$exists:true}}).count() ---> Buena
+		111
+
+4.	db.restaurants.find({$and:[{'grades.2':{$exists:true}}, {'grades.6':{$exists:false}}]}).count()
+
+	db.restaurants.find({'grades.2':{$exists:true}, 'grades.6': {$exists: false}}).count()
+		17533
+
+5.	db.restaurants.find({'grades.6':{$exists:false}}).count()
+		24443
+
+
+6.	db.restaurants.find({"grades.date": {$exists: false}}).count()
+	
+	db.restaurants.find({'grades.0': {$exists: false}}).count() ---> Buena
+		738
+
+7.	db.restaurants.find({"restaurant_id":"40364956"},{"grades":{$slice : 3}, "grades.grade":1, "grades.score":1, _id:0})
+		{ "grades" : [ { "grade" : "A", "score" : 7 }, { "grade" : "B", "score" : 17 }, { "grade" : "A", "score" : 12 } ] }
+		
+
+8. 	db.restaurants.find({"restaurant_id":"40364956"},{"_id":0, "grades":{$slice:-1},"grades.date":1}).pretty()
+		{ "grades" : [ { "date" : ISODate("2012-02-08T00:00:00Z") } ] }
+
+9. 	db.restaurants.find({"restaurant_id": "41217735"}, {grades: {$slice: [1,5]}, "grades.score":1, "_id":0}).pretty()
+		{
+			"grades" : [
+				{
+					"score" : 32
+				},
+				{
+					"score" : 14
+				},
+				{
+					"score" : 23
+				},
+				{
+					"score" : 14
+				},
+				{
+					"score" : 25
+				}
+			]
+		}

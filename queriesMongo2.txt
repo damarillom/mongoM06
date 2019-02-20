@@ -1,0 +1,22 @@
+1. db.people.find({"occupation":"developer"},{"_id":0, "occupation":0}).pretty()
+
+2. db.people.find({"occupation":"developer"},{"_id":0, "first":1, "last":1}).pretty()
+
+3. db.people.find({"nationality":"american"},{"_id":0, "occupation":1}).sort({"occupation":1}).pretty()
+
+   db.people.distinct("occupation",{"nationality":"american"}).sort()
+
+
+4. db.people.find({"occupation":"actor"},{"_id":0, "first":1, "last":1}).sort({"last":1, "first":1}).pretty()
+
+5. db.people.find({"occupation":{$ne:"actor"}},{"_id":0, "first":1, "last":1}).sort({"last":1, "first":1}).pretty()
+
+6. db.people.find({"occupation":"actor"},{"_id":0}).limit(2).pretty()
+
+7. db.people.find({"occupation":"actor"},{"_id":0}).limit(4).skip(2).pretty()
+
+8. db.people.find({"occupation":"actor"},{"_id":0, "first":1, "last":1}).sort({"last":1, "first":1}).limit(2).pretty()
+
+9. db.people.find({"occupation":"actor"},{"_id":0, "first":1, "last":1}).sort({"last":1, "first":1}).limit(4).skip(2).pretty()
+
+10. db.people.distinct("nationality").sort()

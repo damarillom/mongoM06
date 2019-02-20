@@ -1,0 +1,23 @@
+1.	
+	db.restaurants.find({"grades":{$elemMatch:{"grade":"B", "score":14}}}).count()
+		850
+
+2. 	db.restaurants.find({"grades":{$elemMatch:{"grade":"B", "score":{$gt:33}}}}).count()
+		3
+
+3. 	db.restaurants.find({"grades.score":{$gt:93}}).count()
+		3
+
+4.  db.restaurants.find({"grades":{$elemMatch:{"score":{$gt:92, $lt:100}}}}).count()
+		2
+
+5.	db.restaurants.find({"address.coord.0":{$lt:-74}},{"_id":0, "restaurant_id":1, "name":1, "address.street":1, "address.coord":1})
+
+
+6.	db.restaurants.find({"address.coord.0":{$lt:-88}, "address.coord.1":{$gt:46}},{"_id":0, "restaurant_id":1, "name":1, "address.street":1, "address.coord":1})
+		3
+
+7.	db.restaurants.find({ "address.coord.0": { $gt: -98.0, $lt: -90.0}, "address.coord.1": {$gt: 44.4, $lt: 46.8}},{_id: 0, restaurant_id: 1, name: 1, "address.street": 1, "address.coord": 1}).pretty()
+		2
+
+
