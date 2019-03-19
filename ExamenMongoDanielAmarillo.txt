@@ -1,0 +1,55 @@
+1. 	Nom dels restaurants de cuina Irish situats al barri de Queens, Brooklyn o Manhattan que han tingut alguna puntuació més gran que 45. 
+
+	db.restaurants.find({$or:[{"borough":"Queens"},{"borough":"Brooklyn"},{"borough":"Manhattan"}], "grades.score":{$gte:45}},{"name":1, "_id":0}).count()
+		552
+
+2.	Noms dels restaurants que han tingut alguna puntuació concreta amb grade A i score més gran de 20 al barri de Queens. Es suposa què a un barri no es pot repetir el nom de restaurant.
+
+	db.restaurants.find({$and:[{"borough":"Queens"},{"grades":{$elemMatch:{"grade":"A", "score":{$gt:20}}}}]},{"name":1,"_id":0}).count()
+		1
+
+3.	Zipcodes dels restaurants tals que la primera coordenada sigui menor que -108 i la segona coordenada més gran que 38
+	Volem obtenir-los ordenats i sense repetir. Has de pensar que podrien haver-ne molts restaurants al mateix zipcode (codi postal).
+
+	db.restaurants.distinct('address.zipcode',{$and:[{"address.coord.0":{$lt:-108}}, {"address.coord.1":{$gt:38}}]}).sort()
+		4
+		[ "10006", "10031", "11355", "11370" ]
+
+4.	Sense utilitzar expresions regulars, noms dels restaurants de cuina “Pizza” amb nom que comença per “New York”
+	Es suposa que els restaurants sempre comencen per majúscula I què el nom sempre està escrit correctament, no cal considerar variacions tals com New york.
+
+	db.restaurants.find({"cuisine":"Pizza", "name":/^New York/},{"name":1, "_id":0}).count()  //Con expresiones regulares
+		3
+
+
+5.	Trobar quants restaurants tenen entre 2 i 7 opinions (inclosses)
+
+	db.restaurants.find({$and:[{"grades.1": {$exists:true}}, {"grades.7":{$exists:false}}]}).count()
+		20848
+
+6.	Trobar quants restaurants contenen “mexic” escrit sense importar majúscules o minúscules. Pot format part d'una paraula
+
+	db.restaurants.find({"name":/mexic/i}).count() //Sin regex
+		202
+	db.restaurants.find({"name":{$regex:/mexic/i}}).count() //Con regex
+		202
+
+7.	Trobar els noms dels diferents barris ordenats descendentment.
+
+	db.restaurants.distinct('borough').sort() //Forma ascendente
+		[
+			"Bronx",
+			"Brooklyn",
+			"Manhattan",
+			"Missing",
+			"Queens",
+			"Staten Island"
+		]
+		6
+
+
+8.	Nom dels restaurants de Tapas a Manhattan que han tingut al menys una puntuació més gran que 20 i al menys un score A
+
+	db.restaurants.find({$and:[{"borough":"Manhattan"},{"grades.grade":"A"}, {"grades.score":{$gt:20}},{"cuisine":"Tapas"}]}).count()
+		5
+	

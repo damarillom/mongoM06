@@ -1,0 +1,149 @@
+﻿________________
+
+
+
+
+
+
+
+
+db.books2.drop()
+
+
+db.books2.insert([{
+title: 'MongoDB Introduction',
+description: 'MongoDB, a noSQL database',
+by: ['Ramón Bruballa'],
+mail: ['rbruballa@escoladeltreball.org','rbruballa@gmail.com'],
+tags: ['mongodb', 'learning', 'database', 'noSQL'],
+views: 100
+},
+{
+title: 'Postgresql Up & Running',
+description: 'Postgresql crash course',
+by: ['Regina Obe','Leo Hsu'],
+mail: [],
+tags: ['postgresql', 'learning', 'database', 'SQL'],
+isbn:'1449326293',
+views: 200
+},
+{
+title: 'Practical Postgresql',
+description: 'Postgresql practical hands on',
+by: ['Joshua D. Drake', '‎John C. Worsley '],
+mail: [],
+tags: ['postgresql', 'learning', 'database', 'SQL'],
+views: 300
+},
+{
+title: 'PostGIS in Action',
+description: 'tips for geographical information systems',
+by: ['Regina Obe','Leo Hsu'],
+mail: [],
+tags: ['GIS', 'learning'],
+isbn:'1617291390',
+views: 400
+}])
+
+
+
+
+
+
+________________
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          
+1. suma 10 al nombre de visites del llibre amb ISBN 1617291390
+dani
+db.books.updateOne({"isbn":"1617291390"},{$inc:{views:10}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+ 
+
+
+2) al llibre amb ISBN 1449326293
+
+
+suma 20 al nombre de visites
+afegeix l'atribut price amb valor 30
+modifica la descripció a 'Postgresql Crash Course'
+dani
+db.books.updateOne({"isbn":"1449326293"},{$inc:{views:20},$set:{"price":30,"description":"Postgresql Crash Course"}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+
+3) afegeix les etiquetes ‘database’ i ‘e-book’  al llibres que no la tenen 
+
+
+db.books.updateMany({},
+{$addToSet: {tags: ["database", "e-book"]}})
+{ "acknowledged" : true, "matchedCount" : 4, "modifiedCount" : 4 }
+
+
+quim
+db.books.updateMany({}, {$addToSet:{tags:["database","e-book"]}})
+{ "acknowledged" : true, "matchedCount" : 4, "modifiedCount" : 4 }
+quim
+db.books.update({}, {$addToSet:{tags:["database","e-book"]}}, {multi:1})
+WriteResult({ "nMatched" : 4, "nUpserted" : 0, "nModified" : 4 })
+
+
+{
+    "_id" : ObjectId("5c796a2aab4216e771a25391"),
+    "title" : "MongoDB Introduction",
+    "description" : "MongoDB, a noSQL database",
+    "by" : [
+            "Ramón Bruballa"
+    ],
+    "mail" : [
+            "rbruballa@escoladeltreball.org",
+            "rbruballa@gmail.com"
+    ],
+    "tags" : [
+            "mongodb",
+            "learning",
+            "database",
+            "noSQL",
+            [
+                    "database",
+                    "e-book"
+            ]
+    ],
+    "views" : 100
+}
+
+
+
+
+
+
+
+
+https://docs.mongodb.com/manual/reference/operator/update/addToSet/
+
+
+dani
+db.books.updateMany({},{$addToSet:{"tags":{$each:["database", "e-book"]}}})
